@@ -5,7 +5,7 @@ info:
     version: 1.0.0
 
 servers:
-    - url: https://featicompsociety.netlify.app/.netlify/functions
+    - url: /.netlify/functions
 
 paths:
     /students:
@@ -40,6 +40,8 @@ paths:
             summary: Add a new student
             description: Create a new student record.
             operationId: createStudent
+            security:
+                - ApiKeyAuth: []
             requestBody:
                 required: true
                 content:
@@ -82,6 +84,8 @@ paths:
             summary: Update a student by ID
             description: Modify an existing student record.
             operationId: updateStudent
+            security:
+                - ApiKeyAuth: []
             parameters:
                 - name: id
                   in: path
@@ -107,6 +111,8 @@ paths:
             summary: Delete a student by ID
             description: Remove a student from the database.
             operationId: deleteStudent
+            security:
+                - ApiKeyAuth: []
             parameters:
                 - name: id
                   in: path
@@ -121,6 +127,12 @@ paths:
                     description: Student not found.
 
 components:
+    securitySchemes:
+        ApiKeyAuth:
+            type: apiKey
+            in: header
+            name: Api-Key
+
     schemas:
         Student:
             type: object

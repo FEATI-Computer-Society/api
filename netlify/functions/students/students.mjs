@@ -27,7 +27,7 @@ export const handler = async (request) => {
         };
     }
 
-    if (request.httpMethod === 'POST' && request.headers['api-key'] === process.env.VITE_API_KEY) {
+    if (request.httpMethod == 'POST' && request.headers['api-key'] == process.env.VITE_API_KEY) {
         const body = JSON.parse(request.body);
         const { data, error } = await supabase.from('students').insert([body]);
 
