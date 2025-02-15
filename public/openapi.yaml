@@ -1,0 +1,180 @@
+openapi: 3.0.3
+info:
+    title: FEATI Computer Society API Docs
+    description: API for managing members in the FEATI Computer Society student organization.
+    version: 1.0.0
+
+servers:
+    - url: https://featicompsociety.netlify.app/.netlify/functions
+
+paths:
+    /students:
+        get:
+            summary: Get all students
+            description: Retrieve a list of all students.
+            operationId: getStudents
+            parameters:
+                - name: limit
+                  in: query
+                  description: Number of students to return (pagination).
+                  schema:
+                      type: integer
+                      default: 10
+                - name: offset
+                  in: query
+                  description: Number of students to skip (pagination).
+                  schema:
+                      type: integer
+                      default: 0
+            responses:
+                '200':
+                    description: A list of students.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Student'
+
+        post:
+            summary: Add a new student
+            description: Create a new student record.
+            operationId: createStudent
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/StudentInput'
+            responses:
+                '201':
+                    description: Student created successfully.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Student'
+                '400':
+                    description: Bad request.
+
+    /students/{id}:
+        get:
+            summary: Get a student by ID
+            description: Retrieve a single student by their unique ID.
+            operationId: getStudentById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The ID of the student.
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: Student data found.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Student'
+                '404':
+                    description: Student not found.
+
+        put:
+            summary: Update a student by ID
+            description: Modify an existing student record.
+            operationId: updateStudent
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The ID of the student.
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/StudentInput'
+            responses:
+                '200':
+                    description: Student updated successfully.
+                '400':
+                    description: Bad request.
+                '404':
+                    description: Student not found.
+
+        delete:
+            summary: Delete a student by ID
+            description: Remove a student from the database.
+            operationId: deleteStudent
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The ID of the student.
+                  schema:
+                      type: string
+            responses:
+                '204':
+                    description: Student deleted successfully.
+                '404':
+                    description: Student not found.
+
+components:
+    schemas:
+        Student:
+            type: object
+            properties:
+                id:
+                    type: string
+                    example: '12345'
+                firstName:
+                    type: string
+                    example: 'John'
+                middleInitial:
+                    type: string
+                    example: 'D'
+                lastName:
+                    type: string
+                    example: 'Doe'
+                age:
+                    type: integer
+                    example: 21
+                role:
+                    type: string
+                    example: 'President'
+                dateJoined:
+                    type: string
+                    format: date
+                    example: '2023-09-01'
+                birthDate:
+                    type: string
+                    format: date
+                    example: '2002-06-15'
+
+        StudentInput:
+            type: object
+            properties:
+                firstName:
+                    type: string
+                    example: 'John'
+                middleInitial:
+                    type: string
+                    example: 'D'
+                lastName:
+                    type: string
+                    example: 'Doe'
+                age:
+                    type: integer
+                    example: 21
+                role:
+                    type: string
+                    example: 'President'
+                dateJoined:
+                    type: string
+                    format: date
+                    example: '2023-09-01'
+                birthDate:
+                    type: string
+                    format: date
+                    example: '2002-06-15'
