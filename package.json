@@ -12,7 +12,9 @@
     "vite": "^6.1.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.48.1",
+    "@notionhq/client": "^2.2.16",
+    "netlify": "^13.3.3",
+    "netlify-cli": "^19.0.0",
     "swagger-ui-dist": "^5.18.3"
   }
 }
