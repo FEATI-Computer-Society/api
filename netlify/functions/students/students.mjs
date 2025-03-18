@@ -6,7 +6,37 @@ const notion = new Client({
 
 export const handler = async (request) => {
     // Unauthenticated GET members request
-    if (request.httpMethod === 'GET') {
+    if (
+        request.httpMethod === 'GET' &&
+        request.headers['api-key'] &&
+        request.headers['api-key'] === process.env.VITE_API_KEY
+    ) {
+        const data = await notion.databases.query({
+            database_id: process.env.VITE_NOTION_DATABASE_ID,
+            sorts: [
+                {
+                    property: 'ID',
+                    direction: 'ascending',
+                },
+            ],
+        });
+
+        const reorderedData = data.results.map((student) => ({
+            id: `${student.properties['ID']['unique_id'].prefix}-${student.properties['ID']['unique_id'].number}`,
+            firstName: student.properties['First name']['title'][0].plain_text,
+            middleInitial: student.properties['Middle name']['rich_text'][0].plain_text,
+            lastName: student.properties['Last name']['rich_text'][0].plain_text,
+            age: student.properties['Age']['formula'].number,
+            role: student.properties['Role']['select'].name,
+            dateJoined: student.properties['Date Joined']['date'].start,
+        }));
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(reorderedData),
+            headers: { 'Content-Type': 'application/json' },
+        };
+    } else if (request.httpMethod === 'GET') {
         const data = await notion.databases.query({
             database_id: process.env.VITE_NOTION_DATABASE_ID,
             sorts: [
