@@ -6,6 +6,7 @@ info:
 
 servers:
     - url: https://featicompsociety.netlify.app/.netlify/functions
+    # - url: http://localhost:8888/.netlify/functions
 
 paths:
     /students:
