@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
     title: FEATI Computer Society API Docs
-    description: API for managing members in the FEATI Computer Society student organization.
+    description: API for managing publicly available data of the FEATI Computer Society student organization.
     version: 1.0.0
 
 servers:
@@ -9,42 +9,27 @@ servers:
     # - url: http://localhost:8888/.netlify/functions
 
 paths:
-    /students:
+    /members:
         get:
-            summary: Get all students
-            description: Retrieve a list of all students.
-            operationId: getStudents
+            summary: Get all members
+            description: Retrieve a list of members.
+            operationId: getMembers
             security:
                 - ApiKeyAuth: []
-            parameters:
-                - name: limit
-                  in: query
-                  description: Number of students to return (pagination).
-                  schema:
-                      type: integer
-                      default: 10
-                - name: offset
-                  in: query
-                  description: Number of students to skip (pagination).
-                  schema:
-                      type: integer
-                      default: 0
             responses:
                 '200':
-                    description: A list of students.
+                    description: A list of members.
                     content:
                         application/json:
                             schema:
                                 type: array
                                 items:
-                                    $ref: '#/components/schemas/Student'
-                '405':
-                    description: Method not allowed.
+                                    $ref: '#/components/schemas/Member'
 
         post:
-            summary: Add a new student
-            description: Create a new student record.
-            operationId: createStudent
+            summary: Add a new member
+            description: Create a new member record.
+            operationId: createMember
             security:
                 - ApiKeyAuth: []
             requestBody:
@@ -52,92 +37,86 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/StudentInput'
-            responses:
-                '201':
-                    description: Student added successfully.
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Student'
-                '400':
-                    description: Bad request.
-                '403':
-                    description: Forbidden.
-
-    /students/{id}:
-        get:
-            summary: Get a student by ID
-            description: Retrieve a single student by their unique ID.
-            operationId: getStudentById
-            security:
-                - ApiKeyAuth: []
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  description: The ID of the student.
-                  schema:
-                      type: string
+                            $ref: '#/components/schemas/MemberInput'
             responses:
                 '200':
-                    description: Student data found.
+                    description: Member added successfully.
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Student'
-                '404':
-                    description: Student not found.
+                                $ref: '#/components/schemas/MemberInput'
+                '403':
+                    description: Forbidden.
 
-        put:
-            summary: Update a student by ID
-            description: Modify an existing student record.
-            operationId: updateStudent
+    /members/{id}:
+        get:
+            summary: Get a member by ID
+            description: Retrieve a single member by their unique ID.
+            operationId: getMemberById
             security:
                 - ApiKeyAuth: []
             parameters:
                 - name: id
                   in: path
                   required: true
-                  description: The ID of the student.
+                  description: The ID of the member.
                   schema:
-                      type: string
+                      type: integer
+            responses:
+                '200':
+                    description: Member data found.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Member'
+                '404':
+                    description: Member data not found.
+
+        put:
+            summary: Update member data by ID
+            description: Modify an existing member record.
+            operationId: updateMember
+            security:
+                - ApiKeyAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The ID of the member.
+                  schema:
+                      type: integer
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/StudentInput'
+                            $ref: '#/components/schemas/MemberInput'
             responses:
                 '201':
-                    description: Student updated successfully.
-                '400':
-                    description: Bad request.
+                    description: Member data updated successfully.
                 '403':
                     description: Forbidden.
                 '404':
-                    description: Student not found.
+                    description: Member data not found.
 
         delete:
-            summary: Delete a student by ID
-            description: Remove a student from the database.
-            operationId: deleteStudent
+            summary: Delete member data by ID
+            description: Remove member data from the record.
+            operationId: deleteMember
             security:
                 - ApiKeyAuth: []
             parameters:
                 - name: id
                   in: path
                   required: true
-                  description: The ID of the student.
+                  description: The ID of the member.
                   schema:
-                      type: string
+                      type: integer
             responses:
-                '204':
-                    description: Student deleted successfully.
+                '202':
+                    description: Member data deleted successfully.
                 '404':
-                    description: Student not found.
-                '405':
-                    description: Method not allowed.
+                    description: Member data not found.
 
 components:
     securitySchemes:
@@ -147,7 +126,7 @@ components:
             name: Api-Key
 
     schemas:
-        Student:
+        Member:
             type: object
             properties:
                 id:
@@ -156,9 +135,9 @@ components:
                 firstName:
                     type: string
                     example: 'John'
-                middleInitial:
+                middleName:
                     type: string
-                    example: 'D'
+                    example: 'Dennis'
                 lastName:
                     type: string
                     example: 'Doe'
@@ -177,21 +156,18 @@ components:
                     format: date
                     example: '2002-06-15'
 
-        StudentInput:
+        MemberInput:
             type: object
             properties:
                 firstName:
                     type: string
                     example: 'John'
-                middleInitial:
+                middleName:
                     type: string
-                    example: 'D'
+                    example: 'Dennis'
                 lastName:
                     type: string
                     example: 'Doe'
-                age:
-                    type: integer
-                    example: 21
                 role:
                     type: string
                     example: 'President'
