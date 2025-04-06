@@ -137,9 +137,11 @@ export const handler = async (request) => {
                     },
                 ],
             });
+
             const member = data.results.find(
                 (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
             );
+
             if (!member) {
                 return {
                     statusCode: 404,
@@ -147,7 +149,9 @@ export const handler = async (request) => {
                     headers: { 'Content-Type': 'application/json' },
                 };
             }
+
             const reorderedData = authenticatedSchema(member);
+
             return {
                 statusCode: 200,
                 body: JSON.stringify(reorderedData),
@@ -171,7 +175,16 @@ export const handler = async (request) => {
                 (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
             );
 
+            if (!member) {
+                return {
+                    statusCode: 404,
+                    body: JSON.stringify({ error: 'Member not found' }),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            }
+
             const reorderedData = unauthenticatedSchema(member);
+
             return {
                 statusCode: 200,
                 body: JSON.stringify(reorderedData),
@@ -230,7 +243,121 @@ export const handler = async (request) => {
 
             return {
                 statusCode: 200,
-                body: JSON.stringify(member),
+                body: JSON.stringify(response),
+                headers: { 'Content-Type': 'application/json' },
+            };
+        } else {
+            return {
+                statusCode: 403,
+            };
+        }
+    }
+
+    // PATCH update member request
+    if (request.httpMethod === 'PATCH' && request.path.split('/')[4]) {
+        if (request.headers['api-key'] === process.env.VITE_API_KEY) {
+            // Retrieve page_id of the member
+            const memberId = request.path.split('/')[4];
+            const data = await notion.databases.query({
+                database_id: process.env.VITE_NOTION_DATABASE_ID,
+                sorts: [
+                    {
+                        property: 'ID',
+                        direction: 'ascending',
+                    },
+                ],
+            });
+
+            const member = data.results.find(
+                (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
+            );
+
+            if (!member) {
+                return {
+                    statusCode: 404,
+                    body: JSON.stringify({ error: 'Member not found' }),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            }
+
+            const page_id = member.id;
+            const patch = JSON.parse(request.body);
+
+            const patchMember = (patch) => {
+                const properties = {};
+
+                if (patch.birthDate) {
+                    properties['Birth Date'] = {
+                        date: {
+                            start: patch.birthDate,
+                        },
+                    };
+                }
+
+                if (patch.dateJoined) {
+                    properties['Date Joined'] = {
+                        date: {
+                            start: patch.dateJoined,
+                        },
+                    };
+                }
+
+                if (patch.lastName) {
+                    properties['Last name'] = {
+                        rich_text: [
+                            {
+                                text: {
+                                    content: patch.lastName,
+                                },
+                            },
+                        ],
+                    };
+                }
+
+                if (patch.role) {
+                    properties['Role'] = {
+                        select: {
+                            name: patch.role,
+                        },
+                    };
+                }
+
+                if (patch.middleName) {
+                    properties['Middle name'] = {
+                        rich_text: [
+                            {
+                                text: {
+                                    content: patch.middleName,
+                                },
+                            },
+                        ],
+                    };
+                }
+
+                if (patch.firstName) {
+                    properties['First name'] = {
+                        title: [
+                            {
+                                text: {
+                                    content: patch.firstName,
+                                },
+                            },
+                        ],
+                    };
+                }
+
+                return properties;
+            };
+
+            // Append the new properties of the member
+            const response = await notion.pages.update({
+                page_id: page_id,
+                properties: patchMember(patch),
+            });
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(response),
                 headers: { 'Content-Type': 'application/json' },
             };
         } else {
