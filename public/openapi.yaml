@@ -2,6 +2,13 @@ openapi: 3.0.3
 info:
     title: FEATI Computer Society API Docs
     description: API for managing publicly available data of the FEATI Computer Society student organization.
+    contact:
+        name: FEATI Computer Society FB Page
+        url: 'https://facebook.com/featicompsociety'
+        email: 'featicompsociety@gmail.com'
+    license:
+        'name': 'GNU General Public License 3.0'
+        'url': 'https://github.com/FEATI-Computer-Society/FEATI_Computer_Society_API?tab=GPL-3.0-1-ov-file'
     version: 1.0.0
 
 servers:
