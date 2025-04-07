@@ -122,6 +122,8 @@ const memberinputSchema = (member) => ({
     },
 });
 
+const no_of_members = 6;
+
 export const handler = async (request) => {
     //GET member by ID request
     if (request.httpMethod === 'GET' && request.path.split('/')[4]) {
@@ -199,6 +201,7 @@ export const handler = async (request) => {
         if (request.headers['api-key'] && request.headers['api-key'] === process.env.VITE_API_KEY) {
             const data = await notion.databases.query({
                 database_id: process.env.VITE_NOTION_DATABASE_ID,
+                page_size: no_of_members,
                 sorts: [
                     {
                         property: 'ID',
@@ -218,6 +221,7 @@ export const handler = async (request) => {
         else {
             const data = await notion.databases.query({
                 database_id: process.env.VITE_NOTION_DATABASE_ID,
+                page_size: no_of_members,
                 sorts: [
                     {
                         property: 'ID',
@@ -353,6 +357,53 @@ export const handler = async (request) => {
             const response = await notion.pages.update({
                 page_id: page_id,
                 properties: patchMember(patch),
+            });
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(response),
+                headers: { 'Content-Type': 'application/json' },
+            };
+        } else {
+            return {
+                statusCode: 403,
+            };
+        }
+    }
+
+    // DELETE member request
+    if (request.httpMethod === 'DELETE' && request.path.split('/')[4]) {
+        if (request.headers['api-key'] === process.env.VITE_API_KEY) {
+            // Retrieve page_id of the member
+            const memberId = request.path.split('/')[4];
+            const data = await notion.databases.query({
+                database_id: process.env.VITE_NOTION_DATABASE_ID,
+                sorts: [
+                    {
+                        property: 'ID',
+                        direction: 'ascending',
+                    },
+                ],
+            });
+
+            const member = data.results.find(
+                (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
+            );
+
+            if (!member) {
+                return {
+                    statusCode: 404,
+                    body: JSON.stringify({ error: 'Member not found' }),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            }
+
+            const page_id = member.id;
+
+            // Append the new properties of the member
+            const response = await notion.pages.update({
+                page_id: page_id,
+                archived: false,
             });
 
             return {
