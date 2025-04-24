@@ -15,9 +15,14 @@ servers:
     - url: https://featicompsociety.netlify.app/api
     # - url: http://localhost:8888/.netlify/functions
 
+tags:
+    - name: members
+
 paths:
     /members:
         get:
+            tags:
+                - members
             summary: Get all members
             description: Retrieve a list of members.
             operationId: getMembers
@@ -34,6 +39,8 @@ paths:
                                     $ref: '#/components/schemas/Member'
 
         post:
+            tags:
+                - members
             summary: Add a new member
             description: Create a new member record.
             operationId: createMember
@@ -57,6 +64,8 @@ paths:
 
     /members/{id}:
         get:
+            tags:
+                - members
             summary: Get a member by ID
             description: Retrieve a single member by their unique ID.
             operationId: getMemberById
@@ -80,6 +89,8 @@ paths:
                     description: Member data not found.
 
         patch:
+            tags:
+                - members
             summary: Update member data by ID
             description: Modify an existing member record.
             operationId: updateMember
@@ -107,6 +118,8 @@ paths:
                     description: Member data not found.
 
         delete:
+            tags:
+                - members
             summary: Delete member data by ID
             description: Remove member data from the record.
             operationId: deleteMember
