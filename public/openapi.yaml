@@ -12,7 +12,7 @@ info:
     version: 1.0.0
 
 servers:
-    - url: https://featicompsociety.netlify.app/.netlify/functions
+    - url: https://featicompsociety.netlify.app/api
     # - url: http://localhost:8888/.netlify/functions
 
 paths:
