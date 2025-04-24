@@ -1,20 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>FEATI Computer Society API Docs</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css" />
-        <link rel="shortcut icon" href="/FEATI Computer Society Sub Mark Logo 75x75.png" type="image/x-icon" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>FEATI Computer Society</title>
+        <link rel="stylesheet" href="style.css" />
     </head>
-    <body>
-        <div id="swagger-ui"></div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js"></script>
-        <script>
-            window.onload = function () {
-                SwaggerUIBundle({
-                    url: '/openapi.yaml',
-                    dom_id: '#swagger-ui',
-                });
-            };
-        </script>
+    <body class="font-default">
+        <nav class="shadow-2xl">
+            <div class="max-w-screen-xl flex flex-wrap lg:flex-nowrap items-center justify-between mx-auto p-4">
+                <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <img
+                        src="/FEATI Computer Society Sub Mark Logo 75x75.png"
+                        class="h-10"
+                        alt="FEATI Computer Society Logo" />
+                    <span class="self-center text-2xl whitespace-nowrap">FEATI Computer Society</span>
+                </a>
+
+                <button
+                    data-collapse-toggle="navbar-hamburger"
+                    type="button"
+                    class="items-center justify-center p-2 w-10 h-10 text-sm text-black rounded-lg hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-gray-500 block lg:hidden"
+                    aria-controls="navbar-hamburger"
+                    aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <svg
+                        class="w-5 h-5"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 17 14">
+                        <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.3"
+                            d="M1 1h15M1 7h15M1 13h15" />
+                    </svg>
+                </button>
+                <div class="hidden lg:inline-block w-full lg:w-auto" id="navbar-hamburger">
+                    <ul class="flex flex-col lg:flex-row font-medium mt-4 lg:mt-0 rounded-lg lg:gap-4">
+                        <li>
+                            <a href="/" class="block py-2 px-3 text-white bg-blue-400 rounded-sm" aria-current="page"
+                                >Home</a
+                            >
+                        </li>
+                        <li>
+                            <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-blue-400">Projects</a>
+                        </li>
+                        <li>
+                            <a href="/api" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-blue-400"
+                                >API Docs</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div
+            class="swiper w-full h-55 sm:h-60 md:h-100 lg:h-screen px-2 py-8 bg-neutral-700/30 bg-[url(/hero_section.jpg)] bg-cover flex flex-col justify-center">
+            <div class="inline-flex flex-col justify-center items-center align-middle gap-3.5">
+                <div class="text-center justify-center">
+                    <span class="text-white text-xl md:text-4xl lg:text-7xl font-normal text-shadow-xl"
+                        >WELCOME TO<br /></span
+                    ><span class="text-white text-3xl md:text-6xl lg:text-9xl font-normal text-shadow-xl"
+                        >FEATI COMPUTER SOCIETY</span
+                    >
+                </div>
+                <div
+                    class="px-7 py-2 lg:px-12 lg:py-7 bg-blue-400 rounded-full inline-flex justify-center items-center gap-2.5">
+                    <div class="text-center justify-center text-white text-base lg:text-3xl font-bold">JOIN NOW</div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="script.js"></script>
     </body>
 </html>
