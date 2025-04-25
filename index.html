@@ -39,17 +39,23 @@
                     </svg>
                 </button>
                 <div class="hidden lg:inline-block w-full lg:w-auto" id="navbar-hamburger">
-                    <ul class="flex flex-col lg:flex-row font-medium mt-4 lg:mt-0 rounded-lg lg:gap-4">
+                    <ul class="flex flex-col lg:flex-row font-medium mt-4 lg:mt-0 rounded-lg gap-2 lg:gap-4">
                         <li>
                             <a href="/" class="block py-2 px-3 text-white bg-blue-400 rounded-sm" aria-current="page"
                                 >Home</a
                             >
                         </li>
                         <li>
-                            <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-blue-400">Projects</a>
+                            <a
+                                href="#"
+                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-blue-400 hover:text-white"
+                                >Projects</a
+                            >
                         </li>
                         <li>
-                            <a href="/api/index.html" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-blue-400"
+                            <a
+                                href="/api/index.html"
+                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-blue-400 hover:text-white"
                                 >API Docs</a
                             >
                         </li>
@@ -59,7 +65,7 @@
         </nav>
 
         <div
-            class="swiper w-full h-55 sm:h-60 md:h-100 lg:h-screen px-2 py-8 bg-neutral-700/30 bg-[url(/hero_section.jpg)] bg-cover flex flex-col justify-center">
+            class="swiper w-full h-55 sm:h-60 md:h-100 lg:h-screen px-2 py-8 bg-neutral-700/30 bg-[url(/hero_section.jpg)] bg-cover bg-center flex flex-col justify-center">
             <div class="inline-flex flex-col justify-center items-center align-middle gap-3.5">
                 <div class="text-center justify-center">
                     <span class="text-white text-xl md:text-4xl lg:text-7xl font-normal text-shadow-xl"
@@ -74,6 +80,95 @@
                 </div>
             </div>
         </div>
+
+        <div class="self-stretch w-full flex flex-col lg:flex-row align-middle items-center mt-5 lg:mt-0 gap-5">
+            <div class="md:w-1/2 flex flex-col px-5 lg:p-10 lg:py-20 items-center">
+                <div
+                    class="self-stretch text-center justify-center text-black text-md lg:text-2xl font-bold font-default">
+                    OUR MISSION
+                </div>
+                <div class="text-center justify-center text-black text-base lg:text-xl font-normal font-default lg:p-8">
+                    The FEATI Computer Society is committed to advancing information technology and computer science
+                    through education, research, and collaboration. We promote teamwork among our fellow students,
+                    advocate for responsible use of open-source software, and foster partnerships with local and
+                    international tech communities towards a sustainable and inclusive impact on the industry.
+                </div>
+            </div>
+            <div class="w-full md:h-full">
+                <video
+                    autoplay="true"
+                    loop="true"
+                    class="w-full object-cover object-center"
+                    src="/our_mission.mp4"></video>
+            </div>
+        </div>
+
+        <footer class="bg-blue-500 text-white">
+            <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+                <div class="md:flex md:justify-between">
+                    <div class="mb-6 md:mb-0">
+                        <a href="https://flowbite.com/" class="flex items-center">
+                            <img
+                                src="/FEATI Computer Society Sub Mark Logo 75x75.png"
+                                class="h-8 me-3"
+                                alt="FEATI Computer Society Logo" />
+                            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                                >FEATI Computer Society</span
+                            >
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                        <div>
+                            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Socials</h2>
+                            <ul class="font-medium">
+                                <li class="mb-4">
+                                    <a
+                                        href="https://facebook.com/featicompsociety"
+                                        class="hover:underline"
+                                        target="_blank"
+                                        >Facebook</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+                                Follow us
+                            </h2>
+                            <ul class="font-medium">
+                                <li class="mb-4">
+                                    <a
+                                        href="https://github.com/feati-computer-society"
+                                        class="hover:underline"
+                                        target="_blank"
+                                        >Github</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+                                For Developers
+                            </h2>
+                            <ul class="font-medium">
+                                <li class="mb-4">
+                                    <a href="/api/index.html" class="hover:underline" target="_blank">API Docs</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-6 border-gray-200 sm:mx-auto lg:my-8" />
+                <div class="sm:flex sm:items-center sm:justify-between">
+                    <span class="text-sm sm:text-center"
+                        >© 2024
+                        <a href="https://featicompsociety.netlify.app" class="hover:underline" target="_blank"
+                            >FEATI Computer Society</a
+                        >. All Rights Reserved.
+                    </span>
+                </div>
+            </div>
+        </footer>
 
         <script type="module" src="script.js"></script>
     </body>
