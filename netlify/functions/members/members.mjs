@@ -172,6 +172,31 @@ export const handler = async (request) => {
         }
     }
 
+    // POST add member request
+    if (method === 'POST' && endpoint === 'members') {
+        try {
+            if (apiKey && apiKey === process.env.VITE_API_KEY) {
+                const member = JSON.parse(request.body);
+
+                const response = await notion.pages.create(memberinputSchema(member));
+
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify(response),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            } else {
+                return {
+                    statusCode: 403,
+                };
+            }
+        } catch (error) {
+            return {
+                statusCode: 403,
+            };
+        }
+    }
+
     //GET member by ID request
     if (method === 'GET' && endpoint === 'members' && pathParameter) {
         const memberId = pathParameter;
@@ -218,25 +243,6 @@ export const handler = async (request) => {
                     headers: { 'Content-Type': 'application/json' },
                 };
             }
-        }
-    }
-
-    // POST add member request
-    if (method === 'POST') {
-        if (apiKey && apiKey === process.env.VITE_API_KEY) {
-            const member = JSON.parse(request.body);
-
-            const response = await notion.pages.create(memberinputSchema(member));
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify(response),
-                headers: { 'Content-Type': 'application/json' },
-            };
-        } else {
-            return {
-                statusCode: 403,
-            };
         }
     }
 
