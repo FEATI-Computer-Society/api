@@ -131,6 +131,47 @@ export const handler = async (request) => {
     const pathParameter = path[3];
     const apiKey = request.headers['api-key'];
 
+    // GET members request
+    if (method === 'GET' && endpoint === 'members' && !pathParameter) {
+        try {
+            const data = await notion.databases.query({
+                database_id: process.env.VITE_NOTION_DATABASE_ID,
+                page_size: no_of_members,
+                sorts: [
+                    {
+                        property: 'ID',
+                        direction: 'ascending',
+                    },
+                ],
+            });
+
+            let reorderedData = undefined;
+
+            // Authenticated
+            if (apiKey && apiKey === process.env.VITE_API_KEY) {
+                reorderedData = data.results.map((member) => authenticatedSchema(member));
+            }
+            // Unauthenticated
+            else {
+                reorderedData = data.results.map((member) => unauthenticatedSchema(member));
+            }
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(reorderedData),
+                headers: { 'Content-Type': 'application/json' },
+            };
+        } catch (error) {
+            if (error.code === 429) {
+                return {
+                    statusCode: 503,
+                    body: JSON.stringify({ error: 'Service unavailable' }),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            }
+        }
+    }
+
     //GET member by ID request
     if (method === 'GET' && endpoint === 'members' && pathParameter) {
         const memberId = pathParameter;
@@ -177,49 +218,6 @@ export const handler = async (request) => {
                     headers: { 'Content-Type': 'application/json' },
                 };
             }
-        }
-    }
-
-    // GET members request
-    if (method === 'GET') {
-        // Authenticated
-        if (apiKey && apiKey === process.env.VITE_API_KEY) {
-            const data = await notion.databases.query({
-                database_id: process.env.VITE_NOTION_DATABASE_ID,
-                page_size: no_of_members,
-                sorts: [
-                    {
-                        property: 'ID',
-                        direction: 'ascending',
-                    },
-                ],
-            });
-            const reorderedData = data.results.map((member) => authenticatedSchema(member));
-            return {
-                statusCode: 200,
-                body: JSON.stringify(reorderedData),
-                headers: { 'Content-Type': 'application/json' },
-            };
-        }
-
-        // Unauthenticated
-        else {
-            const data = await notion.databases.query({
-                database_id: process.env.VITE_NOTION_DATABASE_ID,
-                page_size: no_of_members,
-                sorts: [
-                    {
-                        property: 'ID',
-                        direction: 'ascending',
-                    },
-                ],
-            });
-            const reorderedData = data.results.map((member) => unauthenticatedSchema(member));
-            return {
-                statusCode: 200,
-                body: JSON.stringify(reorderedData),
-                headers: { 'Content-Type': 'application/json' },
-            };
         }
     }
 

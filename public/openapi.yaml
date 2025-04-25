@@ -3,8 +3,8 @@ info:
     title: FEATI Computer Society API Docs
     description: API for managing publicly available data of the FEATI Computer Society student organization.
     contact:
-        name: FEATI Computer Society FB Page
-        url: 'https://facebook.com/featicompsociety'
+        name: FEATI Computer Society
+        url: 'https://featicompsociety.netlify.app'
         email: 'featicompsociety@gmail.com'
     license:
         'name': 'GNU General Public License 3.0'
@@ -37,6 +37,8 @@ paths:
                                 type: array
                                 items:
                                     $ref: '#/components/schemas/Member'
+                '503':
+                    description: Service unavailable.
 
         post:
             tags:
