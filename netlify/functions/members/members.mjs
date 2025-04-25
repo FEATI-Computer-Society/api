@@ -1,4 +1,4 @@
-import { Client } from '@notionhq/client';
+import { Client, APIErrorCode } from '@notionhq/client';
 
 const notion = new Client({
     auth: process.env.VITE_NOTION_API_KEY,
@@ -125,11 +125,16 @@ const memberinputSchema = (member) => ({
 const no_of_members = 6;
 
 export const handler = async (request) => {
+    const method = request.httpMethod;
+    const path = request.path.split('/');
+    const endpoint = path[2];
+    const pathParameter = path[3];
+    const apiKey = request.headers['api-key'];
+
     //GET member by ID request
-    if (request.httpMethod === 'GET' && request.path.split('/')[4]) {
-        const memberId = request.path.split('/')[4];
-        // Authenticated
-        if (request.headers['api-key'] && request.headers['api-key'] === process.env.VITE_API_KEY) {
+    if (method === 'GET' && endpoint === 'members' && pathParameter) {
+        const memberId = pathParameter;
+        try {
             const data = await notion.databases.query({
                 database_id: process.env.VITE_NOTION_DATABASE_ID,
                 sorts: [
@@ -145,60 +150,40 @@ export const handler = async (request) => {
             );
 
             if (!member) {
-                return {
-                    statusCode: 404,
-                    body: JSON.stringify({ error: 'Member not found' }),
-                    headers: { 'Content-Type': 'application/json' },
-                };
+                throw new ReferenceError('Member not found');
             }
 
-            const reorderedData = authenticatedSchema(member);
+            let reorderedData = undefined;
+
+            // Authenticated
+            if (apiKey && apiKey === process.env.VITE_API_KEY) {
+                reorderedData = authenticatedSchema(member);
+            }
+            // Unauthenticated
+            else {
+                reorderedData = unauthenticatedSchema(member);
+            }
 
             return {
                 statusCode: 200,
                 body: JSON.stringify(reorderedData),
                 headers: { 'Content-Type': 'application/json' },
             };
-        }
-
-        // Unauthenticated
-        else {
-            const data = await notion.databases.query({
-                database_id: process.env.VITE_NOTION_DATABASE_ID,
-                sorts: [
-                    {
-                        property: 'ID',
-                        direction: 'ascending',
-                    },
-                ],
-            });
-
-            const member = data.results.find(
-                (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
-            );
-
-            if (!member) {
+        } catch (error) {
+            if (error instanceof ReferenceError) {
                 return {
                     statusCode: 404,
-                    body: JSON.stringify({ error: 'Member not found' }),
+                    body: JSON.stringify({ error: error.message }),
                     headers: { 'Content-Type': 'application/json' },
                 };
             }
-
-            const reorderedData = unauthenticatedSchema(member);
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify(reorderedData),
-                headers: { 'Content-Type': 'application/json' },
-            };
         }
     }
 
     // GET members request
-    if (request.httpMethod === 'GET') {
+    if (method === 'GET') {
         // Authenticated
-        if (request.headers['api-key'] && request.headers['api-key'] === process.env.VITE_API_KEY) {
+        if (apiKey && apiKey === process.env.VITE_API_KEY) {
             const data = await notion.databases.query({
                 database_id: process.env.VITE_NOTION_DATABASE_ID,
                 page_size: no_of_members,
@@ -239,8 +224,8 @@ export const handler = async (request) => {
     }
 
     // POST add member request
-    if (request.httpMethod === 'POST') {
-        if (request.headers['api-key'] && request.headers['api-key'] === process.env.VITE_API_KEY) {
+    if (method === 'POST') {
+        if (apiKey && apiKey === process.env.VITE_API_KEY) {
             const member = JSON.parse(request.body);
 
             const response = await notion.pages.create(memberinputSchema(member));
@@ -258,8 +243,8 @@ export const handler = async (request) => {
     }
 
     // PATCH update member request
-    if (request.httpMethod === 'PATCH' && request.path.split('/')[4]) {
-        if (request.headers['api-key'] === process.env.VITE_API_KEY) {
+    if (method === 'PATCH' && pathParameter) {
+        if (apiKey === process.env.VITE_API_KEY) {
             // Retrieve page_id of the member
             const memberId = request.path.split('/')[4];
             const data = await notion.databases.query({
@@ -372,8 +357,8 @@ export const handler = async (request) => {
     }
 
     // DELETE member request
-    if (request.httpMethod === 'DELETE' && request.path.split('/')[4]) {
-        if (request.headers['api-key'] === process.env.VITE_API_KEY) {
+    if (method === 'DELETE' && pathParameter) {
+        if (apiKey === process.env.VITE_API_KEY) {
             // Retrieve page_id of the member
             const memberId = request.path.split('/')[4];
             const data = await notion.databases.query({
