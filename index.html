@@ -20,7 +20,7 @@
                 <button
                     data-collapse-toggle="navbar-hamburger"
                     type="button"
-                    class="items-center justify-center p-2 w-10 h-10 text-sm text-black rounded-lg hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-gray-500 block lg:hidden"
+                    class="justify-items-center text-center justify-center p-2 w-10 h-10 text-sm text-black rounded-lg hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-gray-500 block lg:hidden"
                     aria-controls="navbar-hamburger"
                     aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
@@ -29,7 +29,7 @@
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
-                        viewBox="0 0 17 14">
+                        viewBox="0 0 17 17">
                         <path
                             stroke="currentColor"
                             stroke-linecap="round"
@@ -65,7 +65,7 @@
         </nav>
 
         <div
-            class="swiper w-full h-55 sm:h-60 md:h-100 lg:h-screen px-2 py-8 bg-neutral-700/30 bg-[url(/hero_section.jpg)] bg-cover bg-center flex flex-col justify-center">
+            class="swiper w-full h-70 sm:h-80 md:h-90 lg:h-120 lg:h-screen px-2 py-8 bg-neutral-700/30 bg-[url(/hero_section.jpg)] bg-cover bg-center flex flex-col justify-center">
             <div class="inline-flex flex-col justify-center items-center align-middle gap-3.5">
                 <div class="text-center justify-center">
                     <span class="text-white text-xl md:text-4xl lg:text-7xl font-normal text-shadow-xl"
@@ -81,24 +81,24 @@
             </div>
         </div>
 
-        <div class="self-stretch w-full flex flex-col lg:flex-row align-middle items-center mt-5 lg:mt-0 gap-5">
-            <div class="md:w-1/2 flex flex-col px-5 lg:p-10 lg:py-20 items-center">
-                <div
-                    class="self-stretch text-center justify-center text-black text-md lg:text-2xl font-bold font-default">
+        <div class="grid grid-flow-row-dense grid-cols-4">
+            <div class="col-span-4 lg:col-span-2 flex flex-col p-8 lg:p-10 lg:py-20 justify-center">
+                <div class="text-center justify-center text-black text-md lg:text-2xl font-bold font-default">
                     OUR MISSION
                 </div>
-                <div class="text-center justify-center text-black text-base lg:text-xl font-normal font-default lg:p-8">
+                <div
+                    class="text-center justify-center text-black text-base px-5 lg:px-15 lg:text-xl font-normal font-default">
                     The FEATI Computer Society is committed to advancing information technology and computer science
                     through education, research, and collaboration. We promote teamwork among our fellow students,
                     advocate for responsible use of open-source software, and foster partnerships with local and
                     international tech communities towards a sustainable and inclusive impact on the industry.
                 </div>
             </div>
-            <div class="w-full md:h-full">
+            <div class="col-span-4 justify-items-center lg:col-span-2">
                 <video
                     autoplay="true"
                     loop="true"
-                    class="w-full object-cover object-center"
+                    class="object-cover object-center w-100 hidden lg:block lg:h-full lg:w-full"
                     src="/our_mission.mp4"></video>
             </div>
         </div>
@@ -117,7 +117,7 @@
                             >
                         </a>
                     </div>
-                    <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div class="grid grid-cols-3 gap-8 sm:gap-6">
                         <div>
                             <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Socials</h2>
                             <ul class="font-medium">
