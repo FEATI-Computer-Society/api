@@ -4,7 +4,8 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-        "dev": "vite",
+        "dev": "run-p dev-vite dev-css",
+        "dev-vite": "vite",
         "dev-css": "postcss style.css -o public/style.css -w",
         "build": "vite build",
         "preview": "vite preview"
