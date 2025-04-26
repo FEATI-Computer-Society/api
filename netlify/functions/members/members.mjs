@@ -373,48 +373,59 @@ export const handler = async (request) => {
 
     // DELETE member request
     if (method === 'DELETE' && pathParameter) {
-        if (apiKey === process.env.VITE_API_KEY) {
-            // Retrieve page_id of the member
-            const memberId = request.path.split('/')[4];
-            const data = await notion.databases.query({
-                database_id: process.env.VITE_NOTION_DATABASE_ID,
-                sorts: [
-                    {
-                        property: 'ID',
-                        direction: 'ascending',
-                    },
-                ],
-            });
+        const memberId = pathParameter;
+        try {
+            if (apiKey === process.env.VITE_API_KEY) {
+                const data = await notion.databases.query({
+                    database_id: process.env.VITE_NOTION_DATABASE_ID,
+                    sorts: [
+                        {
+                            property: 'ID',
+                            direction: 'ascending',
+                        },
+                    ],
+                });
 
-            const member = data.results.find(
-                (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
-            );
+                const member = data.results.find(
+                    (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
+                );
 
-            if (!member) {
+                if (!member) {
+                    throw new ReferenceError('Member not found');
+                }
+
+                const page_id = member.id;
+
+                // Append the new properties of the member
+                const response = await notion.pages.update({
+                    page_id: page_id,
+                    in_trash: true,
+                });
+
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify(response),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            } else {
+                return {
+                    statusCode: 403,
+                };
+            }
+        } catch (error) {
+            if (error.code === APIErrorCode.ValidationError) {
+                return {
+                    statusCode: 400,
+                    body: JSON.stringify({ error: error.message }),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            } else {
                 return {
                     statusCode: 404,
                     body: JSON.stringify({ error: 'Member not found' }),
                     headers: { 'Content-Type': 'application/json' },
                 };
             }
-
-            const page_id = member.id;
-
-            // Append the new properties of the member
-            const response = await notion.pages.update({
-                page_id: page_id,
-                archived: false,
-            });
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify(response),
-                headers: { 'Content-Type': 'application/json' },
-            };
-        } else {
-            return {
-                statusCode: 403,
-            };
         }
     }
 };
