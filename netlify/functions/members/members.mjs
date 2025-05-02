@@ -1,8 +1,28 @@
 import { Client, APIErrorCode } from '@notionhq/client';
 
+import { createClient } from 'redis';
+
 const notion = new Client({
-    auth: process.env.VITE_NOTION_API_KEY,
+    auth: process.env.NOTION_API_KEY,
 });
+
+let cache;
+
+const initializeRedis = async () => {
+    if (!cache) {
+        cache = createClient({
+            username: 'default',
+            password: process.env.REDIS_PASSWORD,
+            socket: {
+                host: process.env.REDIS_SOCKET_HOST,
+                port: 15019,
+            },
+        });
+
+        cache.on('error', (err) => console.error('Redis Client Error', err));
+        await cache.connect();
+    }
+};
 
 const authenticatedSchema = (member) => ({
     id: `${member.properties['ID']['unique_id'].prefix}-${member.properties['ID']['unique_id'].number}`,
@@ -25,7 +45,7 @@ const unauthenticatedSchema = (member) => ({
 const memberinputSchema = (member) => ({
     parent: {
         type: 'database_id',
-        database_id: process.env.VITE_NOTION_DATABASE_ID,
+        database_id: process.env.NOTION_DATABASE_ID,
     },
     properties: {
         'Birth Date': {
@@ -122,9 +142,9 @@ const memberinputSchema = (member) => ({
     },
 });
 
-const no_of_members = 6;
-
 export const handler = async (request) => {
+    await initializeRedis();
+
     const method = request.httpMethod;
     const path = request.path.split('/');
     const endpoint = path[2];
@@ -134,21 +154,39 @@ export const handler = async (request) => {
     // GET members request
     if (method === 'GET' && !pathParameter) {
         try {
-            const data = await notion.databases.query({
-                database_id: process.env.VITE_NOTION_DATABASE_ID,
-                page_size: no_of_members,
-                sorts: [
-                    {
-                        property: 'ID',
-                        direction: 'ascending',
-                    },
-                ],
-            });
+            let data;
+            try {
+                const cachedData = await cache.get('members');
+                if (cachedData) {
+                    data = JSON.parse(cachedData);
+                } else {
+                    data = await notion.databases.query({
+                        database_id: process.env.NOTION_DATABASE_ID,
+                        sorts: [
+                            {
+                                property: 'ID',
+                                direction: 'ascending',
+                            },
+                        ],
+                    });
+                    await cache.set('members', JSON.stringify(data));
+                }
+            } catch (error) {
+                data = await notion.databases.query({
+                    database_id: process.env.NOTION_DATABASE_ID,
+                    sorts: [
+                        {
+                            property: 'ID',
+                            direction: 'ascending',
+                        },
+                    ],
+                });
+            }
 
-            let reorderedData = undefined;
+            let reorderedData;
 
             // Authenticated
-            if (apiKey && apiKey === process.env.VITE_API_KEY) {
+            if (apiKey && apiKey === process.env.API_KEY) {
                 reorderedData = data.results.map((member) => authenticatedSchema(member));
             }
             // Unauthenticated
@@ -175,7 +213,7 @@ export const handler = async (request) => {
     // POST add member request
     if (method === 'POST') {
         try {
-            if (apiKey && apiKey === process.env.VITE_API_KEY) {
+            if (apiKey && apiKey === process.env.API_KEY) {
                 const member = JSON.parse(request.body);
 
                 const response = await notion.pages.create(memberinputSchema(member));
@@ -202,7 +240,7 @@ export const handler = async (request) => {
         const memberId = pathParameter;
         try {
             const data = await notion.databases.query({
-                database_id: process.env.VITE_NOTION_DATABASE_ID,
+                database_id: process.env.NOTION_DATABASE_ID,
                 sorts: [
                     {
                         property: 'ID',
@@ -222,7 +260,7 @@ export const handler = async (request) => {
             let reorderedData = undefined;
 
             // Authenticated
-            if (apiKey && apiKey === process.env.VITE_API_KEY) {
+            if (apiKey && apiKey === process.env.API_KEY) {
                 reorderedData = authenticatedSchema(member);
             }
             // Unauthenticated
@@ -250,9 +288,9 @@ export const handler = async (request) => {
     if (method === 'PATCH' && pathParameter) {
         const memberId = pathParameter;
         try {
-            if (apiKey === process.env.VITE_API_KEY) {
+            if (apiKey === process.env.API_KEY) {
                 const data = await notion.databases.query({
-                    database_id: process.env.VITE_NOTION_DATABASE_ID,
+                    database_id: process.env.NOTION_DATABASE_ID,
                     sorts: [
                         {
                             property: 'ID',
@@ -375,9 +413,9 @@ export const handler = async (request) => {
     if (method === 'DELETE' && pathParameter) {
         const memberId = pathParameter;
         try {
-            if (apiKey === process.env.VITE_API_KEY) {
+            if (apiKey === process.env.API_KEY) {
                 const data = await notion.databases.query({
-                    database_id: process.env.VITE_NOTION_DATABASE_ID,
+                    database_id: process.env.NOTION_DATABASE_ID,
                     sorts: [
                         {
                             property: 'ID',
