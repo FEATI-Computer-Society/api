@@ -24,6 +24,14 @@ const initializeRedis = async () => {
     }
 };
 
+const redis_cache_set_options = {
+    expiration: {
+        type: 'EX',
+        value: 10,
+    },
+    condition: 'NX',
+};
+
 const authenticatedSchema = (member) => ({
     id: `${member.properties['ID']['unique_id'].prefix}-${member.properties['ID']['unique_id'].number}`,
     firstName: member.properties['First name']['title'][0].plain_text,
@@ -169,7 +177,7 @@ export const handler = async (request) => {
                             },
                         ],
                     });
-                    await cache.set('members', JSON.stringify(data));
+                    await cache.set('members', JSON.stringify(data), redis_cache_set_options);
                 }
             } catch (error) {
                 data = await notion.databases.query({
@@ -239,15 +247,34 @@ export const handler = async (request) => {
     if (method === 'GET' && pathParameter) {
         const memberId = pathParameter;
         try {
-            const data = await notion.databases.query({
-                database_id: process.env.NOTION_DATABASE_ID,
-                sorts: [
-                    {
-                        property: 'ID',
-                        direction: 'ascending',
-                    },
-                ],
-            });
+            let data;
+            try {
+                const cachedData = await cache.get(`members`);
+                if (cachedData) {
+                    data = JSON.parse(cachedData);
+                } else {
+                    data = await notion.databases.query({
+                        database_id: process.env.NOTION_DATABASE_ID,
+                        sorts: [
+                            {
+                                property: 'ID',
+                                direction: 'ascending',
+                            },
+                        ],
+                    });
+                    await cache.set('members', JSON.stringify(data), redis_cache_set_options);
+                }
+            } catch (error) {
+                data = await notion.databases.query({
+                    database_id: process.env.NOTION_DATABASE_ID,
+                    sorts: [
+                        {
+                            property: 'ID',
+                            direction: 'ascending',
+                        },
+                    ],
+                });
+            }
 
             const member = data.results.find(
                 (member) => member.properties['ID']['unique_id'].number === parseInt(memberId)
@@ -257,7 +284,7 @@ export const handler = async (request) => {
                 throw new ReferenceError('Member not found');
             }
 
-            let reorderedData = undefined;
+            let reorderedData;
 
             // Authenticated
             if (apiKey && apiKey === process.env.API_KEY) {
