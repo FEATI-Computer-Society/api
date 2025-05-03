@@ -16,7 +16,7 @@
         "postcss": "^8.5.3",
         "postcss-cli": "^11.0.1",
         "tailwindcss": "^4.1.4",
-        "vite": "^6.2.6"
+        "vite": "^6.2.7"
     },
     "dependencies": {
         "@notionhq/client": "^2.2.16",
