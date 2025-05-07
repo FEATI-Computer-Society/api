@@ -53,7 +53,7 @@ const unauthenticatedSchema = (member) => ({
 const memberinputSchema = (member) => ({
     parent: {
         type: 'database_id',
-        database_id: process.env.NOTION_DATABASE_ID,
+        database_id: process.env.NOTION_DATABASE_ID_MEMBERS,
     },
     properties: {
         'Birth Date': {
@@ -155,7 +155,6 @@ export const handler = async (request) => {
 
     const method = request.httpMethod;
     const path = request.path.split('/');
-    const endpoint = path[2];
     const pathParameter = path[3];
     const apiKey = request.headers['api-key'];
 
@@ -169,7 +168,7 @@ export const handler = async (request) => {
                     data = JSON.parse(cachedData);
                 } else {
                     data = await notion.databases.query({
-                        database_id: process.env.NOTION_DATABASE_ID,
+                        database_id: process.env.NOTION_DATABASE_ID_MEMBERS,
                         sorts: [
                             {
                                 property: 'ID',
@@ -181,7 +180,7 @@ export const handler = async (request) => {
                 }
             } catch (error) {
                 data = await notion.databases.query({
-                    database_id: process.env.NOTION_DATABASE_ID,
+                    database_id: process.env.NOTION_DATABASE_ID_MEMBERS,
                     sorts: [
                         {
                             property: 'ID',
@@ -254,7 +253,7 @@ export const handler = async (request) => {
                     data = JSON.parse(cachedData);
                 } else {
                     data = await notion.databases.query({
-                        database_id: process.env.NOTION_DATABASE_ID,
+                        database_id: process.env.NOTION_DATABASE_ID_MEMBERS,
                         sorts: [
                             {
                                 property: 'ID',
@@ -266,7 +265,7 @@ export const handler = async (request) => {
                 }
             } catch (error) {
                 data = await notion.databases.query({
-                    database_id: process.env.NOTION_DATABASE_ID,
+                    database_id: process.env.NOTION_DATABASE_ID_MEMBERS,
                     sorts: [
                         {
                             property: 'ID',
@@ -317,7 +316,7 @@ export const handler = async (request) => {
         try {
             if (apiKey === process.env.API_KEY) {
                 const data = await notion.databases.query({
-                    database_id: process.env.NOTION_DATABASE_ID,
+                    database_id: process.env.NOTION_DATABASE_ID_MEMBERS,
                     sorts: [
                         {
                             property: 'ID',
@@ -442,7 +441,7 @@ export const handler = async (request) => {
         try {
             if (apiKey === process.env.API_KEY) {
                 const data = await notion.databases.query({
-                    database_id: process.env.NOTION_DATABASE_ID,
+                    database_id: process.env.NOTION_DATABASE_ID_MEMBERS,
                     sorts: [
                         {
                             property: 'ID',
