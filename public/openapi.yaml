@@ -17,6 +17,7 @@ servers:
 
 tags:
     - name: members
+    - name: projects
 
 paths:
     /members:
@@ -140,6 +141,27 @@ paths:
                 '404':
                     description: Member data not found.
 
+    /projects:
+        get:
+            tags:
+                - projects
+            summary: Get all projects
+            description: Retrieve a list of projects.
+            operationId: getProjects
+            security:
+                - ApiKeyAuth: []
+            responses:
+                '200':
+                    description: A list of members.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Project'
+                '503':
+                    description: Service unavailable.
+
 components:
     securitySchemes:
         ApiKeyAuth:
@@ -201,3 +223,20 @@ components:
                     type: string
                     format: date
                     example: '2002-06-15'
+
+        Project:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: 'Project Adam'
+                startDate:
+                    type: string
+                    format: date
+                    example: '2005-10-02'
+                status:
+                    type: string
+                    example: 'In progress'
+                priority:
+                    type: string
+                    example: 'High'
