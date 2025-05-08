@@ -146,4 +146,59 @@ export const handler = async (request) => {
             };
         }
     }
+
+    //GET project by ID request
+    if (method === 'GET' && pathParameter) {
+        const projectId = pathParameter;
+        try {
+            const data = await notion.databases.query({
+                database_id: process.env.NOTION_DATABASE_ID_PROJECTS,
+                filter: {
+                    property: 'FCS Public API',
+                    checkbox: {
+                        equals: true,
+                    },
+                },
+            });
+
+            const project = data.results.find(
+                (project) => project.properties['ID']['unique_id'].number === parseInt(projectId)
+            );
+
+            if (!project) {
+                throw new ReferenceError('Project not found');
+            }
+
+            let reorderedData;
+
+            // Authenticated
+            if (apiKey && apiKey === process.env.API_KEY) {
+                reorderedData = authenticatedSchema(project);
+            }
+            // Unauthenticated
+            else {
+                reorderedData = unauthenticatedSchema(project);
+            }
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(reorderedData),
+                headers: { 'Content-Type': 'application/json' },
+            };
+        } catch (error) {
+            if (error.code === 429) {
+                return {
+                    statusCode: 503,
+                    body: JSON.stringify({ error: 'Service unavailable' }),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            } else if (error instanceof ReferenceError) {
+                return {
+                    statusCode: 404,
+                    body: JSON.stringify({ error: error.message }),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            }
+        }
+    }
 };
