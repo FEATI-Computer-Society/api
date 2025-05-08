@@ -18,13 +18,61 @@ const unauthenticatedSchema = (project) => ({
     summary: project.properties['Summary'].rich_text.plain_text,
 });
 
+const projectInputSchema = (project) => ({
+    parent: {
+        type: 'database_id',
+        database_id: process.env.NOTION_DATABASE_ID_PROJECTS,
+    },
+    properties: {
+        'Project name': {
+            type: 'title',
+            title: [
+                {
+                    type: 'text',
+                    text: {
+                        content: project.name,
+                        link: null,
+                    },
+                    annotations: {
+                        bold: false,
+                        italic: false,
+                        strikethrough: false,
+                        underline: false,
+                        code: false,
+                        color: 'default',
+                    },
+                    href: null,
+                },
+            ],
+        },
+        'Date Created': {
+            type: 'date',
+            date: {
+                start: project.startDate,
+            },
+        },
+        Status: {
+            type: 'status',
+            status: {
+                name: project.status,
+            },
+        },
+        Priority: {
+            type: 'select',
+            select: {
+                name: project.priority,
+            },
+        },
+    },
+});
+
 export const handler = async (request) => {
     const method = request.httpMethod;
     const path = request.path.split('/');
     const pathParameter = path[3];
     const apiKey = request.headers['api-key'];
 
-    // GET projects
+    // GET projects request
     if (method === 'GET' && !pathParameter) {
         try {
             const data = await notion.databases.query({
@@ -61,6 +109,31 @@ export const handler = async (request) => {
                     headers: { 'Content-Type': 'application/json' },
                 };
             }
+        }
+    }
+
+    // POST add project request
+    if (method === 'POST') {
+        try {
+            if (apiKey && apiKey === process.env.API_KEY) {
+                const project = JSON.parse(request.body);
+
+                const response = await notion.pages.create(projectInputSchema(project));
+
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify(response),
+                    headers: { 'Content-Type': 'application/json' },
+                };
+            } else {
+                return {
+                    statusCode: 403,
+                };
+            }
+        } catch (error) {
+            return {
+                statusCode: 403,
+            };
         }
     }
 };

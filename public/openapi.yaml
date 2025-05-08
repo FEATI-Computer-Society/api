@@ -161,6 +161,107 @@ paths:
                                     $ref: '#/components/schemas/Project'
                 '503':
                     description: Service unavailable.
+        post:
+            tags:
+                - projects
+            summary: Add a new project
+            description: Create a new project record.
+            operationId: createProject
+            security:
+                - ApiKeyAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ProjectInput'
+            responses:
+                '200':
+                    description: Project added sucessfully.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/ProjectInput'
+                '403':
+                    description: Forbidden.
+
+    /projects/{id}:
+        get:
+            tags:
+                - projects
+            summary: Get a project by ID
+            description: Retrieve a single project by their unique ID.
+            operationId: getProjectById
+            security:
+                - ApiKeyAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The ID of the project.
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Project data found.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Project'
+                '404':
+                    description: Project data not found.
+
+        patch:
+            tags:
+                - projects
+            summary: Update project data by ID
+            description: Modify an existing project record.
+            operationId: updateProject
+            security:
+                - ApiKeyAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The ID of the project.
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ProjectInput'
+            responses:
+                '201':
+                    description: Project data updated successfully.
+                '403':
+                    description: Forbidden.
+                '404':
+                    description: Project data not found.
+
+        delete:
+            tags:
+                - projects
+            summary: Delete project data by ID
+            description: Remove project data from the record.
+            operationId: deleteProject
+            security:
+                - ApiKeyAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The ID of the project.
+                  schema:
+                      type: integer
+            responses:
+                '202':
+                    description: Project data deleted successfully.
+                '404':
+                    description: Project data not found.
 
 components:
     securitySchemes:
@@ -225,6 +326,23 @@ components:
                     example: '2002-06-15'
 
         Project:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: 'Project Adam'
+                startDate:
+                    type: string
+                    format: date
+                    example: '2005-10-02'
+                status:
+                    type: string
+                    example: 'In progress'
+                priority:
+                    type: string
+                    example: 'High'
+
+        ProjectInput:
             type: object
             properties:
                 name:
