@@ -23,7 +23,17 @@ const projectInputSchema = (project) => ({
         type: 'database_id',
         database_id: process.env.NOTION_DATABASE_ID_PROJECTS,
     },
+    icon: {
+        type: 'external',
+        external: {
+            url: 'https://www.notion.so/icons/target_lightgray.svg',
+        },
+    },
     properties: {
+        'FCS Public API': {
+            type: 'checkbox',
+            checkbox: project.publicAPI ?? false,
+        },
         'Project name': {
             type: 'title',
             title: [

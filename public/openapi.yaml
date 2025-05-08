@@ -12,8 +12,8 @@ info:
     version: 1.0.0
 
 servers:
-    - url: https://featicompsociety.netlify.app/api
-    # - url: http://localhost:8888/api
+    # - url: https://featicompsociety.netlify.app/api
+    - url: http://localhost:8888/api
 
 tags:
     - name: members
@@ -345,6 +345,9 @@ components:
         ProjectInput:
             type: object
             properties:
+                publicAPI:
+                    type: boolean
+                    example: false
                 name:
                     type: string
                     example: 'Project Adam'
