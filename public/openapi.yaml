@@ -8,7 +8,7 @@ info:
         email: 'featicompsociety@gmail.com'
     license:
         'name': 'GNU General Public License 3.0'
-        'url': 'https://github.com/FEATI-Computer-Society/FEATI_Computer_Society_API?tab=GPL-3.0-1-ov-file'
+        'url': 'https://github.com/featicompsociety/api?tab=GPL-3.0-1-ov-file'
     version: 1.0.0
 
 servers:
